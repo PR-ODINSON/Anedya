@@ -13,10 +13,10 @@ import {
 
 export default function TelemetryChart({ data, title, dataKey, color = "#3b82f6" }) {
     return (
-        <div className="glass-panel p-5 flex flex-col h-[350px]">
+        <div className="glass-panel p-5">
             <h3 className="text-lg font-semibold text-slate-100 mb-4">{title}</h3>
-            <div className="flex-1 w-full min-h-0">
-                <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full h-72">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                     <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
                             <linearGradient id={`color-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
@@ -65,3 +65,4 @@ export default function TelemetryChart({ data, title, dataKey, color = "#3b82f6"
         </div>
     );
 }
+

@@ -24,9 +24,10 @@ const deviceSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-// Virtual for isOnline status (true if checked in within last 5 minutes)
+// Virtual for isOnline status — threshold configurable via DEVICE_ONLINE_THRESHOLD_MS env var
+// Default: 5 minutes. Increase in dev if no real devices are sending heartbeats.
 deviceSchema.virtual('isOnline').get(function() {
-    const THRESHOLD = 5 * 60 * 1000; // 5 minutes in milliseconds
+    const THRESHOLD = parseInt(process.env.DEVICE_ONLINE_THRESHOLD_MS) || 5 * 60 * 1000;
     return (Date.now() - this.lastSeen.getTime()) < THRESHOLD;
 });
 

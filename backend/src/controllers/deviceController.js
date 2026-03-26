@@ -53,10 +53,16 @@ export const toggleRelay = async (req, res) => {
             return res.status(404).json({ message: 'Device not found' });
         }
 
-        // Send command to Anedya
-        await anedyaService.sendCommand(device.deviceId, 'relay_toggle', { state });
+        // Best-effort: send command to Anedya Cloud.
+        // If it fails (e.g. missing API key in dev), log and continue —
+        // the local DB state is the source of truth for the dashboard.
+        try {
+            await anedyaService.sendCommand(device.deviceId, 'relay_toggle', { state });
+        } catch (cloudErr) {
+            console.warn(`[WARN] Anedya cloud command failed for ${device.deviceId}: ${cloudErr.message}`);
+        }
 
-        // Update local state and last seen
+        // Always update local DB state
         device.relayState = state;
         device.lastSeen = Date.now();
         await device.save();
